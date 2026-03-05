@@ -3,19 +3,18 @@
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
-    "outDir": "./dist/",
+    "outDir": "./dist",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
     "types": [],
-    "esModuleInterop": true, // gets rid of ts(1295) error
-    
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
     // and npm install -D @types/node
+  
 
     // Other Outputs
     "sourceMap": true,
@@ -37,7 +36,7 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": false, // set to false get rid of ts(1484) error
+    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
