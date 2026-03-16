@@ -40,10 +40,10 @@ app.use(articleRouter.allowedMethods());
 app.use(async (ctx: RouterContext, next: any) => {
     try{
         await next();
-        if(ctx.status === 404){
-            ctx.status = 404;
-            ctx.body = { err: "No such endpoint existed"};
-        }
+        // if(ctx.status === 404){
+        //     ctx.status = 404;
+        //     ctx.body = { err: "No such endpoint existed"};
+        // }
     }catch(err: any){
         ctx.body = { err: err};
     }       

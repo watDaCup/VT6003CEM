@@ -1,7 +1,9 @@
 import bodyParser from "koa-bodyparser";
-import Router, { type RouterContext } from "koa-router"
+import Router, { type RouterContext } from "koa-router";
+import * as model from '../model/articles';
+import { updateArticleById } from '../model/articles';
 
-const router = new Router({prefix: '/api/v1/articles'})
+const router = new Router({prefix: '/api/v1/articles'});
 
 const articles = [
     {title: 'hello article', fullText: 'some text here to fill the body'},
@@ -11,41 +13,50 @@ const articles = [
 ]
 
 const getAll = async (ctx: RouterContext, next: any) =>{
-    ctx.body = articles;
+    let articles = await model.getAllArticles();
+    if(articles.length) {
+        ctx.body = articles;
+    } else {
+        ctx.body = {};
+    }
     await next();
 }
 
 const getById = async (ctx: RouterContext, next: any) =>{
-    let id = +ctx.params.id!;
-    if ((id < articles.length + 1) && (id > 0)) {
-        ctx.body = articles[id - 1];
+    let id = ctx.params.id;
+    let articles = await model.getByIDArticles(id);
+    if(articles.length) {
+        ctx.body = articles;
     } else {
         ctx.status = 404;
-        ctx.body = {msg: 'Article not found '}
+        ctx.body = {msg: 'Article not found'}
     }
     await next();
 }
 
 
 const createArticle = async (ctx: RouterContext, next: any) =>{
-    let {title, fullText}: any = ctx.request.body;
-    let newArticle = {title: title, fullText: fullText};
-    articles.push(newArticle);
-    ctx.status = 201;
-    ctx.body = newArticle;
+    const body = ctx.request.body;
+    let result = await model.addNewArticle(body)
+    if(result.status == 201) {
+        ctx.body = articles;
+    } else {
+        ctx.status = 404;
+        ctx.body = {msg: 'Create failed'};
+    }
     await next();
 }
 
 
 const updateArticle = async (ctx: RouterContext, next: any) =>{
-    let id = +ctx.params.id!
-    let { title, fullText }: any = ctx.request.body;
-    let updateArticle = { title: title, fullText: fullText};
-    if ((id < articles.length + 1) && (id > 0)) {
-        articles[id -1] = updateArticle;
+    let id = ctx.params.id!
+    const body = ctx.request.body;
+    let result = await model.updateArticleById(id, body)
+    if(result.status == 201) {
+        ctx.body = articles;
     } else {
         ctx.status = 404;
-        ctx.body = {msg: 'Article not found'};
+        ctx.body = {msg: 'Create failed'};
     }
     await next();
 }
