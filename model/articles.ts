@@ -17,7 +17,7 @@ export const getAllArticles = async () => {
 
 export const getByIDArticles = async (id: any) => {
     let query = 'SELECT * FROM articles WHERE ID = ?';
-    let data = await db.run_query(query, id);
+    let data = await db.run_query(query, [id]);
     return data;
 }
 
@@ -37,15 +37,32 @@ export const addNewArticle = async (article: any) => {
     }
 }
 
-export const updateArticleById = async (id: any, article: any) => {
-    let keys = Object.keys(article);
-    let values = Object.values(article);
-    let setClause = keys.map(k => `${k} = ?`).join(',');
+export const updateArticleById = async (article: any) => {
+    const { ID, ...fieldsToUpdate} = article;
 
-    let query = `UPDATE articles SET ${setClause} WHERE id = ${id}}`;
+    if (!ID) {
+        return { status: 400, msg: 'Missing \'ID\' field in request body'}
+    }
+
+    let keys = Object.keys(fieldsToUpdate);
+    let values = Object.values(fieldsToUpdate);
+    let setClause = keys.map(k => `${k} = ?`).join(',');
+    let params = [...values, ID];
+
+    let query = `UPDATE articles SET ${setClause} WHERE id = ?`;
     try {
-        let msg = await db.run_update(query, values);
+        let msg = await db.run_update(query, params);
         return { status: 201, msg: msg}
+    } catch (err: any) {
+        return err;
+    }
+}
+
+export const deleteArticleById = async (id: any) => {
+    let query = `DELETE FROM articles WHERE ID = ?`;
+    try {
+        let msg = await db.run_update(query, [id]);
+        return { status: 200, msg: msg}
     } catch (err: any) {
         return err;
     }

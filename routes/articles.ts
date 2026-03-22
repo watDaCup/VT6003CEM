@@ -2,6 +2,8 @@ import bodyParser from "koa-bodyparser";
 import Router, { type RouterContext } from "koa-router";
 import * as model from '../model/articles';
 import { updateArticleById } from '../model/articles';
+import { basicAuth } from "../controllers/auth";
+import { validateArticle } from "../controllers/validation";
 
 const router = new Router({prefix: '/api/v1/articles'});
 
@@ -49,9 +51,8 @@ const createArticle = async (ctx: RouterContext, next: any) =>{
 
 
 const updateArticle = async (ctx: RouterContext, next: any) =>{
-    let id = ctx.params.id!
     const body = ctx.request.body;
-    let result = await model.updateArticleById(id, body)
+    let result = await model.updateArticleById(body)
     if(result.status == 201) {
         ctx.body = articles;
     } else {
@@ -63,9 +64,10 @@ const updateArticle = async (ctx: RouterContext, next: any) =>{
 
 
 const deleteArticle = async (ctx: RouterContext, next: any) =>{
-    let id = +ctx.params.id!
-    if ((id < articles.length + 1) && (id > 0)) {
-        articles.splice(id, 1)
+    let id = ctx.params.id;
+    let result = await model.deleteArticleById(id)
+    if (result) {
+        ctx.body = {msg: 'Article deleted'};
     } else {
         ctx.status = 404;
         ctx.body = {msg: 'Article not found'};
@@ -74,9 +76,9 @@ const deleteArticle = async (ctx: RouterContext, next: any) =>{
 }
 
 router.get('/', getAll);
-router.post('/', bodyParser(), createArticle);
+router.post('/', basicAuth, bodyParser(), validateArticle, createArticle);
 router.get('/:id', getById);
-router.put('/:id', updateArticle);
+router.put('/:id', basicAuth, bodyParser(), validateArticle, updateArticle);
 router.del('/:id', deleteArticle);
 
 console.log('Registered Routes:');
