@@ -2,6 +2,7 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import json from 'koa-json';
 import logger from 'koa-logger';
+import serve from 'koa-static';
 import Router, { RouterContext } from 'koa-router';
 import { router as articleRouter } from './routes/articles';
 import { router as userRouter } from './routes/special';
@@ -17,6 +18,7 @@ const welcomeAPI = async (ctx: RouterContext, next: any) => {
     await next();
 }
 
+app.use(serve('./docs'));
 app.use(json());
 app.use(logger());
 app.use(bodyParser())
