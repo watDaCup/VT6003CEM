@@ -5,7 +5,7 @@ export const run_query = async (query: any, values: any) => {
     try {
         const sequelize = new Sequelize(`mysql://${config.user}@${config.host}:${config.port}/${config.database}`);
         await sequelize.authenticate();
-        let data = await sequelize.query(query, {
+        const data = await sequelize.query(query, {
             replacements: values,
             type: QueryTypes.SELECT
         });
@@ -21,7 +21,7 @@ export const run_insert = async (sql: string, values: any) => {
     try {
         const sequelize = new Sequelize(`mysql://${config.user}@${config.host}:${config.port}/${config.database}`);
         await sequelize.authenticate();
-        let data = await sequelize.query(sql, {
+        const data = await sequelize.query(sql, {
             replacements: values,
             type: QueryTypes.INSERT
         });
@@ -37,7 +37,7 @@ export const run_update = async (sql: string, values: any) => {
     try {
         const sequelize = new Sequelize(`mysql://${config.user}@${config.host}:${config.port}/${config.database}`);
         await sequelize.authenticate();
-        let data = await sequelize.query(sql, {
+        const data = await sequelize.query(sql, {
             replacements: values,
             type: QueryTypes.UPDATE
         });

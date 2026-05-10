@@ -15,7 +15,7 @@ const articles = [
 ]
 
 const getAll = async (ctx: RouterContext, next: any) =>{
-    let articles = await model.getAllArticles();
+    const articles = await model.getAllArticles();
     if(articles.length) {
         ctx.body = articles;
     } else {
@@ -25,8 +25,8 @@ const getAll = async (ctx: RouterContext, next: any) =>{
 }
 
 const getById = async (ctx: RouterContext, next: any) =>{
-    let id = ctx.params.id;
-    let articles = await model.getByIDArticles(id);
+    const id = ctx.params.id;
+    const articles = await model.getByIDArticles(id);
     if(articles.length) {
         ctx.body = articles;
     } else {
@@ -39,7 +39,7 @@ const getById = async (ctx: RouterContext, next: any) =>{
 
 const createArticle = async (ctx: RouterContext, next: any) =>{
     const body = ctx.request.body;
-    let result = await model.addNewArticle(body)
+    const result = await model.addNewArticle(body)
     if(result.status == 201) {
         ctx.body = articles;
     } else {
@@ -52,7 +52,7 @@ const createArticle = async (ctx: RouterContext, next: any) =>{
 
 const updateArticle = async (ctx: RouterContext, next: any) =>{
     const body = ctx.request.body;
-    let result = await model.updateArticleById(body)
+    const result = await model.updateArticleById(body)
     if(result.status == 201) {
         ctx.body = articles;
     } else {
@@ -64,8 +64,8 @@ const updateArticle = async (ctx: RouterContext, next: any) =>{
 
 
 const deleteArticle = async (ctx: RouterContext, next: any) =>{
-    let id = ctx.params.id;
-    let result = await model.deleteArticleById(id)
+    const id = ctx.params.id;
+    const result = await model.deleteArticleById(id)
     if (result) {
         ctx.body = {msg: 'Article deleted'};
     } else {
@@ -81,9 +81,9 @@ router.get('/:id', getById);
 router.put('/:id', basicAuth, bodyParser(), validateArticle, updateArticle);
 router.del('/:id', deleteArticle);
 
-console.log('Registered Routes:');
-router.stack.forEach((layer) => {
-    console.log(`${layer.methods.join(', ')} ${layer.path}`);
-});
+// console.log('Registered Routes:');
+// router.stack.forEach((layer) => {
+//     console.log(`${layer.methods.join(', ')} ${layer.path}`);
+// });
 
 export{ router }
