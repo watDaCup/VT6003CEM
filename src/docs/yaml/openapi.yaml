@@ -1,54 +1,415 @@
 openapi: 3.0.0
 info:
   version: 1.0.0
-  title: Back End Demonstration API
-  description: A simple blog API.
-  name: Apache 2.0
-  url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  title: CinemaVault API
+  description: REST API for the CinemaVault film discovery platform.
 servers:
-- url: 'http://127.0.0.1:10888'
-  description: Development server
+  - url: 'http://127.0.0.1:10888'
+    description: Development server
 tags:
-- name: Users
-  description: API endpoints for user management.
-- name: Articles
-  description: Access and perform CRUD operations on blog entries.
+  - name: Films
+    description: Manage and browse film entries.
+  - name: Users
+    description: Account, favorites, and profile photo operations.
+  - name: Messages
+    description: User messages to administrator and admin moderation.
 paths:
-  /articles/{id}:
+  /api/v1/films:
+    get:
+      tags:
+        - Films
+      summary: Browse and filter films.
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Filter by film title.
+        - in: query
+          name: genre
+          schema:
+            type: string
+          description: Filter by genre.
+        - in: query
+          name: year
+          schema:
+            type: integer
+          description: Filter by release year.
+        - in: query
+          name: rating
+          schema:
+            type: number
+            format: float
+          description: Filter films with minimum rating.
+      responses:
+        '200':
+          description: A list of films.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+    post:
+      tags:
+        - Films
+      summary: Create a film (Admin only).
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmCreate'
+      responses:
+        '201':
+          description: Film created successfully.
+  /api/v1/films/{id}:
     parameters:
       - in: path
         name: id
+        required: true
         schema:
           type: integer
-        required: true
-        description: Numeric id of the article
+        description: Film ID.
     get:
       tags:
-        - Articles
-      description:
-        Get article by id.
+        - Films
+      summary: Get film details.
       responses:
         '200':
-          description: View of an article record.
+          description: Film details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
         '404':
-          description: Article was not found in the DB.
+          description: Film not found.
     put:
       tags:
-        - Articles
-      description:
-        Update article by ID.
+        - Films
+      summary: Update a film (Admin only).
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmUpdate'
       responses:
         '200':
-          description: Update confirmation and link to record.
-        '404':
-          description: Article was not found in the DB.
+          description: Film updated.
     delete:
       tags:
-        - Articles
-      description:
-        Delete article by ID.
+        - Films
+      summary: Delete a film (Admin only).
+      security:
+        - basicAuth: []
       responses:
         '200':
-          description: Delete confirmation.
-        '404':
-          description: User was not found in the DB.
+          description: Film deleted.
+  /api/v1/users:
+    post:
+      tags:
+        - Users
+      summary: Sign up for a user account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignup'
+      responses:
+        '201':
+          description: User account created.
+  /api/v1/users/login:
+    post:
+      tags:
+        - Users
+      summary: Authenticate with basic credentials.
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Authentication successful.
+  /api/v1/users/{id}/photo:
+    post:
+      tags:
+        - Users
+      summary: Upload a base64-encoded profile photo.
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                data:
+                  type: string
+              required:
+                - filename
+                - data
+      responses:
+        '200':
+          description: Photo uploaded.
+  /api/v1/users/{id}/favorites:
+    post:
+      tags:
+        - Users
+      summary: Add a film to a user's favorites.
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filmId:
+                  type: integer
+              required:
+                - filmId
+      responses:
+        '200':
+          description: Film added to favorites.
+    get:
+      tags:
+        - Users
+      summary: List a user's favorite films.
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Favorite films list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+  /api/v1/users/{id}/favorites/{filmId}:
+    delete:
+      tags:
+        - Users
+      summary: Remove a film from favorites.
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: filmId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Favorite removed.
+  /api/v1/messages:
+    post:
+      tags:
+        - Messages
+      summary: Send a message to the administrator.
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                film_id:
+                  type: integer
+                  nullable: true
+                text:
+                  type: string
+              required:
+                - text
+      responses:
+        '201':
+          description: Message sent.
+    get:
+      tags:
+        - Messages
+      summary: Admin list all messages.
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: List of messages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+  /api/v1/messages/{id}/respond:
+    post:
+      tags:
+        - Messages
+      summary: Respond to a message (Admin only).
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                response:
+                  type: string
+              required:
+                - response
+      responses:
+        '200':
+          description: Response saved.
+  /api/v1/messages/{id}:
+    delete:
+      tags:
+        - Messages
+      summary: Delete a message (Admin only).
+      security:
+        - basicAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Message deleted.
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    Film:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        genre:
+          type: string
+          nullable: true
+        year:
+          type: integer
+          nullable: true
+        rating:
+          type: number
+          format: float
+          nullable: true
+        description:
+          type: string
+          nullable: true
+    FilmCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        genre:
+          type: string
+          nullable: true
+        year:
+          type: integer
+          nullable: true
+        rating:
+          type: number
+          format: float
+          nullable: true
+        description:
+          type: string
+          nullable: true
+      required:
+        - title
+    FilmUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        genre:
+          type: string
+        year:
+          type: integer
+        rating:
+          type: number
+          format: float
+        description:
+          type: string
+    UserSignup:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - Admin
+            - User
+            - Public
+        email:
+          type: string
+      required:
+        - username
+        - password
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        from_user_id:
+          type: integer
+        to_user_id:
+          type: integer
+        film_id:
+          type: integer
+          nullable: true
+        text:
+          type: string
+        response:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
