@@ -2,7 +2,7 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./out",
 
     // Environment Settings
@@ -43,5 +43,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "exclude": ["node_module", "**/*.test.ts"]
+  "include": ["src", "test"],
+  "exclude": ["node_modules", "out"]
 }
