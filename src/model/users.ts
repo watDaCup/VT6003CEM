@@ -18,9 +18,9 @@ export const getById = async (id: number) => {
     return await db.run_query(sql, [id]);
 }
 
-export const updateProfilePhoto = async (id: number, path: string) => {
+export const updateProfilePhoto = async (id: number, base64: string) => {
     const sql = 'UPDATE users SET profile_photo = ? WHERE id = ?';
-    return await db.run_update(sql, [path, id]);
+    return await db.run_update(sql, [base64, id]);
 }
 
 export const getAdminUser = async () => {

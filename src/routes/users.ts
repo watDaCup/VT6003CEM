@@ -21,23 +21,22 @@ router.post('/login', basicAuth, async (ctx: Context) => {
     ctx.body = { message: 'Authenticated', user: ctx.state.user };
 });
 
-// Upload profile photo as base64 JSON { filename, data }
+// Upload profile photo as base64 JSON
 router.post('/:id/photo', basicAuth, async (ctx: Context) => {
     const id = Number(ctx.params.id);
     if (ctx.state.user.id !== id && ctx.state.user.role !== 'Admin') {
-        ctx.status = 403; ctx.body = { message: 'Forbidden' }; return;
+        ctx.status = 403; 
+        ctx.body = { message: 'Forbidden' }; 
+        return;
     }
-    const { filename, data } = (ctx.request.body as { filename?: string; data?: string }) || {};
-    if (!filename || !data) { ctx.status = 400; ctx.body = { message: 'filename and data required' }; return; }
-    const uploadsDir = path.join(process.cwd(), 'uploads');
-    if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-    const buf = Buffer.from(data, 'base64');
-    const safeName = `${Date.now()}-${path.basename(filename)}`;
-    const outPath = path.join(uploadsDir, safeName);
-    fs.writeFileSync(outPath, buf);
-    const rel = `/uploads/${safeName}`;
-    await model.updateProfilePhoto(id, rel);
-    ctx.body = { message: 'Photo uploaded', path: rel };
+    const { data } = (ctx.request.body as { data?: string }) || {};
+    if (!data) { 
+        ctx.status = 400; 
+        ctx.body = { message: 'filename and data required' }; 
+        return; 
+    }
+    await model.updateProfilePhoto(id, data);
+    ctx.body = { message: 'Photo uploaded', data: data };
 });
 
 // Favorites
