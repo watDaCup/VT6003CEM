@@ -41,11 +41,13 @@ export const basicAuth = async (ctx: Context, next: Next) => {
         ctx.state.user = {
             id: user.id,
             username: user.username,
+            email: user.email,
             role: user.role
         };
         await next();
     } catch (err: any) {
+        // console.error("[DEBUG - Database/Auth Middleware Exception Caught]:", err);
         ctx.status = 500;
-        ctx.body = { message: 'Auth error' };
+        ctx.body = { message: 'Auth error'};
     }
 }

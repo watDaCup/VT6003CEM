@@ -23,6 +23,13 @@ router.post('/', basicAuth, requireRole(['User','Admin']), async (ctx: Context) 
     ctx.status = 201; ctx.body = { message: 'Message sent', result: res };
 });
 
+// User views received messages
+router.get('/user/:id', basicAuth, requireRole(['User']), async (ctx: Context) => {
+    const id = Number(ctx.params.id)
+    const list = await msgModel.getMessagesByUser(id)
+    ctx.body = list;
+})
+
 // Admin views all messages
 router.get('/', basicAuth, requireRole(['Admin']), async (ctx: Context) => {
     const list = await msgModel.getMessagesForAdmin();

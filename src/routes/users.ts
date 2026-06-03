@@ -3,8 +3,6 @@ import { Context } from 'koa';
 import * as model from '../model/users';
 import { basicAuth } from '../middleware/auth';
 import * as favModel from '../model/favorites';
-import fs from 'fs';
-import path from 'path';
 
 const router = new Router({ prefix: '/api/v1/users' });
 

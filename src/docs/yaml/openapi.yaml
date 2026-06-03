@@ -154,12 +154,9 @@ paths:
             schema:
               type: object
               properties:
-                filename:
-                  type: string
                 data:
                   type: string
               required:
-                - filename
                 - data
       responses:
         '200':
@@ -272,6 +269,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Message'
+  /api/v1/messages/user/{id}:
+    get:
+      tags:
+        - Messages
+      summary: User list own messages.
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: List of messages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'                
   /api/v1/messages/{id}/respond:
     post:
       tags:
