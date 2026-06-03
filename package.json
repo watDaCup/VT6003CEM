@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@koa/cors": "^5.0.0",
     "@types/koa": "^3.0.1",
     "@types/koa-bodyparser": "^4.3.13",
     "@types/koa-json": "^2.0.24",

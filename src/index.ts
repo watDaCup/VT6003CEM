@@ -4,6 +4,7 @@ import json from 'koa-json';
 import logger from 'koa-logger';
 import serve from 'koa-static';
 import path from 'path';
+import cors from '@koa/cors';
 import { router as filmsRouter } from './routes/films';
 import { router as usersRouter } from './routes/users';
 import { router as messagesRouter } from './routes/messages';
@@ -11,6 +12,8 @@ import { errorHandler } from './controllers/errorHandler';
 
 const app = new Koa();
 
+
+app.use(cors());
 app.use(errorHandler);
 app.use(serve(path.join(__dirname,'/docs')));
 app.use(serve(path.join(process.cwd(),'uploads')));

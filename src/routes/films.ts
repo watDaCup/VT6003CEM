@@ -22,6 +22,7 @@ router.get('/:id', async (ctx: Context) => {
 // Admin-only create/update/delete
 router.post('/', basicAuth, requireRole(['Admin']), async (ctx: Context) => {
     const body = ctx.request.body as any;
+    console.log('Creating film with data:', body);
     const res = await model.addFilm(body);
     ctx.status = 201;
     ctx.body = { message: 'Film created', result: res };
@@ -29,6 +30,7 @@ router.post('/', basicAuth, requireRole(['Admin']), async (ctx: Context) => {
 
 router.put('/:id', basicAuth, requireRole(['Admin']), async (ctx: Context) => {
     const id = Number(ctx.params.id);
+    console.log('Updating film with ID:', id);
     const res = await model.updateFilm(id, ctx.request.body as any);
     ctx.body = { message: 'Film updated', result: res };
 });
