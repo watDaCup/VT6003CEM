@@ -30,7 +30,7 @@ describe('Users routes', () => {
     expect(res.body).toEqual({ message: 'Authenticated', user: { id: 7, username: 'login', role: 'User' } });
   });
 
-  it('POST /api/v1/users/:id/favorites adds a favorite for the owner', async () => {
+  it('POST /api/v1/users/:id/favorites/:filmId adds a favorite for the owner', async () => {
     jest.doMock('../../src/model/users', () => ({
       findByUsername: jest.fn().mockResolvedValue([{ id: 8, username: 'favuser', password: 'pw', role: 'User' }])
     }));
@@ -39,9 +39,8 @@ describe('Users routes', () => {
     }));
     const { default: app } = require('../../src/index');
     const res = await request(app.callback())
-      .post('/api/v1/users/8/favorites')
-      .set('Authorization', encodeBasicAuth('favuser','pw'))
-      .send({ filmId: 20 });
+      .post('/api/v1/users/8/favorites/3')
+      .set('Authorization', encodeBasicAuth('favuser','pw'));
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ message: 'Added to favorites' });
   });
