@@ -165,32 +165,6 @@ paths:
         '200':
           description: Photo uploaded.
   /api/v1/users/{id}/favorites:
-    post:
-      tags:
-        - Users
-      summary: Add a film to a user's favorites.
-      security:
-        - basicAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                filmId:
-                  type: integer
-              required:
-                - filmId
-      responses:
-        '200':
-          description: Film added to favorites.
     get:
       tags:
         - Users
@@ -213,6 +187,32 @@ paths:
                 items:
                   $ref: '#/components/schemas/Film'
   /api/v1/users/{id}/favorites/{filmId}:
+    post:
+        tags:
+          - Users
+        summary: Add a film to a user's favorites.
+        security:
+          - basicAuth: []
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filmId:
+                    type: integer
+                required:
+                  - filmId
+        responses:
+          '200':
+            description: Film added to favorites.
     delete:
       tags:
         - Users

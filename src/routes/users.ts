@@ -41,10 +41,10 @@ router.post('/:id/photo', basicAuth, async (ctx: Context) => {
 });
 
 // Favorites
-router.post('/:id/favorites', basicAuth, async (ctx: Context) => {
+router.post('/:id/favorites/:filmId', basicAuth, async (ctx: Context) => {
     const id = Number(ctx.params.id);
+    const filmId = Number(ctx.params.filmId);
     if (ctx.state.user.id !== id) { ctx.status = 403; return; }
-    const { filmId } = ctx.request.body as { filmId: number };
     await favModel.addFavorite(id, filmId);
     ctx.body = { message: 'Added to favorites' };
 });
