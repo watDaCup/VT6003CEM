@@ -42,7 +42,8 @@ export const basicAuth = async (ctx: Context, next: Next) => {
             id: user.id,
             username: user.username,
             email: user.email,
-            role: user.role
+            role: user.role,
+            profile_photo: user.profile_photo
         };
         await next();
     } catch (err: any) {
