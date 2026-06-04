@@ -8,7 +8,7 @@ import { requireRole } from '../middleware/rbac';
 const router = new Router({ prefix: '/api/v1/messages' });
 
 // Registered users send messages to admin
-router.post('/', basicAuth, requireRole(['User','Admin']), async (ctx: Context) => {
+router.post('/', basicAuth, requireRole(['User','Admin', 'Public']), async (ctx: Context) => {
     const body = ctx.request.body as { film_id?: number; text: string };
     const from_user_id = ctx.state.user.id;
     const admin = await usersModel.getAdminUser() as { id: number };
