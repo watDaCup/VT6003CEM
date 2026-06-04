@@ -41,5 +41,8 @@ export const updateFilm = async (id: number, f: Partial<Film>) => {
 
 export const deleteFilm = async (id: number) => {
     const sql = 'DELETE FROM films WHERE id = ?';
-    return await db.run_update(sql, [id]);
+    await db.run_update(sql, [id]);
+
+    const resetSql = 'ALTER TABLE films AUTO_INCREMENT = 1;';
+    return await db.run_update(resetSql, []);
 }

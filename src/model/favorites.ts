@@ -7,7 +7,10 @@ export const addFavorite = async (userId: number, filmId: number) => {
 
 export const removeFavorite = async (userId: number, filmId: number) => {
     const sql = 'DELETE FROM favorites WHERE user_id = ? AND film_id = ?';
-    return await db.run_update(sql, [userId, filmId]);
+    await db.run_update(sql, [userId, filmId]);
+
+    const resetSql = 'ALTER TABLE favorites AUTO_INCREMENT = 1;';
+    return await db.run_update(resetSql, []);
 }
 
 export const listFavorites = async (userId: number) => {

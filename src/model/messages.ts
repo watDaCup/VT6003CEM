@@ -23,5 +23,8 @@ export const respondToMessage = async (id: number, response: string) => {
 
 export const deleteMessage = async (id: number) => {
     const sql = 'DELETE FROM messages WHERE id = ?';
-    return await db.run_update(sql, [id]);
+    await db.run_update(sql, [id]);
+    
+    const resetSql = 'ALTER TABLE messages AUTO_INCREMENT = 1;';
+    return await db.run_update(resetSql, []);
 }
